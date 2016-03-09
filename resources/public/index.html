@@ -1,0 +1,118 @@
+<html>
+    <head>
+    </head>
+    <body>
+        <div>
+            <div>Enter a Utah city:</div>
+            <input id=city onkeyup='getCities()'></input>
+        </div>
+        <div>
+            <div>Suggestion:</div>
+            <ul id=suggestions></ul>
+        </div>
+        <button onmouseup='submit(this)'>Submit</button>
+        <br>
+        <textarea id=weatherCity></textarea>
+        <div>Current Weather</div>
+        <ul>
+            <li>Location: <div    id=location   ></div></li>
+            <li>Temperature: <div id=temperature></div></li>
+            <li>Weather: <div     id=weather    ></div></li>
+        </ul>
+        <br>
+        <br>
+        <div>
+            <div>Enter a movie title here:</div>
+            <input id=movie-title></input>
+            <br>
+            <br>
+            <button onmouseup='findMovie(this)'>Find this movie!</button>
+            <div id=movie-resp></div>
+        </div>
+    </body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script>
+        var port           = 3000;
+        // Find another REST service and put it on the page
+        var citiesURLBase  = "http://localhost:" + port + "/cities?nameBeginsWith=";
+        var apiKey         = "51f437dadbd3f3fe";
+        var weatherURLBase = "http://api.wunderground.com/api/" + apiKey + "/conditions/q/UT/"
+
+        var repURL = function (zipCode) {
+            return "http://whoismyrepresentative.com/getall_mems.php?zip=" + zipCode + "&output=json";
+        }
+
+        var moviesURL = function (title) {
+            return "http://localhost:" + port + "/movies?title=" + title;
+        }
+        
+        var getJSON = function(url, onsuccess) {
+            $.ajax({  type:  'GET'
+                    , url:   url
+                    , async: true
+                    , contentType: "application/json"
+                    , dataType: 'jsonp'
+                    , success: onsuccess
+                    , error: function(e) {
+                        console.log("There was an error!");
+                        console.log(e);
+                        console.log(e.message);
+                    }});
+        }
+
+        var submit = function() {
+            $("#weatherCity").val($("#city").val());
+            var weatherURL_f = weatherURLBase + $("#weatherCity").val() + ".json";
+            console.log(weatherURL_f);
+            getJSON(weatherURL_f, function(resp) {
+                console.log(resp.current_observation);
+                var city = resp.current_observation.display_location.city;
+                var tempFahrenheit = resp.current_observation.temp_f;
+                var tempCelsius    = resp.current_observation.temp_c;
+                var weather = resp.current_observation.weather;
+
+                $("#location"   ).text(city);
+                $("#temperature").text(tempFahrenheit + " F (" + tempCelsius + " C)");
+                $("#weather"    ).text(weather);
+            });
+        }
+
+        var getCities = function(e) {
+            var userText = $("#city").val();
+            var citiesURL_f = citiesURLBase + userText
+            console.log(citiesURL_f);
+            var sug = $("#suggestions").empty();
+
+
+            $.getJSON(citiesURL_f, function(cities) { 
+                console.log(cities);
+                for (city of cities) {
+                    sug.append("<li>" + city.city + "</li>");
+                    if (city.city == userText) {
+                        console.log("MATCH!", city.city);
+                    }
+                }
+            });
+        }
+
+        var findMovie = function() {
+            var movieTitle = $("#movie-title").val();
+            console.log("URL is", moviesURL(movieTitle));
+            var movieData = $("#movie-resp").empty();
+
+            getJSON(moviesURL(movieTitle), function(resp) {
+                console.log(resp);
+                if (resp.Error != undefined) {
+                    movieData.append("<div>" + "Movie not found." + "</div>");
+                } else {
+                    movieData.append("<div>Title: " + resp.Title + "</div>");
+                    movieData.append("<div>Year: " + resp.Year + "</div>");
+                    movieData.append("<div>Rated: " + resp.Rated + "</div>");
+                    movieData.append("<div>Released: " + resp.Released + "</div>");
+                    movieData.append("<div>Genre: " + resp.Genre + "</div>");
+                }
+            })
+        }
+    </script>
+</html>
+
