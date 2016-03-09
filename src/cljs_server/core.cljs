@@ -14,17 +14,6 @@
 
 (defonce StringDecoder (.-StringDecoder (nodejs/require "string_decoder")))
 
-; var req = http.request(reqOptions, function(res) {
-;     ...
-;     var decoder = new StringDecoder('utf8');
-
-;     res.on('data', function(chunk) {
-;         var textChunk = decoder.write(chunk);
-;         // process utf8 text chunk
-;     });
-; });
-
-; |app| gets redefined on reload
 (def app (express))
 
 (defn redirect!
