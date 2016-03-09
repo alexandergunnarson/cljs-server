@@ -56,7 +56,7 @@
             return "http://" + getHost() + ":" + port + "/movies?title=" + title;
         }
         
-        var getJSON = function(url, onsuccess) {
+        var getJSON = function(url, onsuccess, onerror) {
             $.ajax({  type:  'GET'
                     , url:   url
                     , async: true
@@ -67,6 +67,7 @@
                         console.log("There was an error!");
                         console.log(e);
                         console.log(e.message);
+                        if (onerror != null) onerror(e);
                     }});
         }
 
@@ -84,7 +85,7 @@
                 $("#location"   ).text(city);
                 $("#temperature").text(tempFahrenheit + " F (" + tempCelsius + " C)");
                 $("#weather"    ).text(weather);
-            });
+            }, null);
         }
 
         var getCities = function(e) {
@@ -110,7 +111,7 @@
             console.log("URL is", moviesURL(movieTitle));
             var movieData = $("#movie-resp").empty();
 
-            getJSON(moviesURL(movieTitle), function(resp) {
+            var onsuccess = function(resp) {
                 console.log(resp);
                 if (resp.Error != undefined) {
                     movieData.append("<div>" + "Movie not found." + "</div>");
@@ -121,7 +122,9 @@
                     movieData.append("<div>Released: " + resp.Released + "</div>");
                     movieData.append("<div>Genre: " + resp.Genre + "</div>");
                 }
-            })
+            }
+
+            getJSON(moviesURL(movieTitle), onsuccess, onsuccess);
         }
     </script>
 </html>
