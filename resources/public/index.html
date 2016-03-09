@@ -67,7 +67,7 @@
                         console.log("There was an error!");
                         console.log(e);
                         console.log(e.message);
-                        if (onerror != null) onerror(e);
+                        if (onerror != null) onerror(JSON.parse(e.responseText));
                     }});
         }
 

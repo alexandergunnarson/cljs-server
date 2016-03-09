@@ -6,3 +6,6 @@ node resources/server/js/prod-compiled/cljs-server.js
 export TERM=screen.linux && screen -S Project7
 ; Go to screen
 export TERM=screen.linux && screen -Dr Project7
+
+; Reload
+git pull && node resources/server/js/prod-compiled/cljs-server.js
