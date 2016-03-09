@@ -33,8 +33,18 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
     <script>
         var port           = 3000;
+
+        var getHost = function() {
+            var portI = location.host.indexOf(":");
+            if (portI != -1) {
+                return location.host.substring(0, portI);
+            } else {
+                return location.host;
+            }
+        }
+
         // Find another REST service and put it on the page
-        var citiesURLBase  = "http://localhost:" + port + "/cities?nameBeginsWith=";
+        var citiesURLBase  = "http://" + getHost() + ":" + port + "/cities?nameBeginsWith=";
         var apiKey         = "51f437dadbd3f3fe";
         var weatherURLBase = "http://api.wunderground.com/api/" + apiKey + "/conditions/q/UT/"
 
@@ -43,7 +53,7 @@
         }
 
         var moviesURL = function (title) {
-            return "http://localhost:" + port + "/movies?title=" + title;
+            return "http://" + getHost() + ":" + port + "/movies?title=" + title;
         }
         
         var getJSON = function(url, onsuccess) {
