@@ -47,8 +47,9 @@ return sb.push(str_chunk);
 return resp.on("end",((function (decoder,sb){
 return (function (){
 server_resp.setHeader("Access-Control-Allow-Origin","*");
-
-return server_resp.send(sb.join(""));
+var resp_str = sb.join("");
+cljs.core.println.call(null, "to-url:", to_url, "resp-str", resp_str);
+return server_resp.send(resp_str);
 });})(decoder,sb))
 );
 });
