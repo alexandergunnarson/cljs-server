@@ -1,0 +1,6 @@
+; Run
+
+node resources/server/js/prod-compiled/cljs-server.js
+
+; Screen
+export TERM=screen.linux && screen -S Project7
